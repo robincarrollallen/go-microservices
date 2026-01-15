@@ -1,5 +1,5 @@
 app:
-  name: user-service
+  name: tenant-service
   env: dev
 
 http:

@@ -1,11 +1,13 @@
 package repo
 
+import "context"
+
 type TenantRepo struct{}
 
 func NewTenantRepo() *TenantRepo {
 	return &TenantRepo{}
 }
 
-func (r *TenantRepo) GetTenant(id string) string {
-	return "user-" + id
+func (r *TenantRepo) GetTenant(ctx context.Context, id string) string {
+	return "tenant-" + id
 }
