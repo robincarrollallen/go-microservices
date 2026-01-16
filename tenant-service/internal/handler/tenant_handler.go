@@ -5,10 +5,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"shared.local/pkg/logger"
+	"shared.local/pkg/trace"
 
-	"tenant-service/internal/logger"
 	"tenant-service/internal/service"
-	"tenant-service/internal/trace"
 )
 
 type TenantHandler struct {
@@ -28,7 +28,12 @@ func (h *TenantHandler) Register(r *gin.Engine) {
 // 健康检查相关路由
 func (h *TenantHandler) registerHealthRoutes(r *gin.Engine) {
 	r.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"status": "ok"})
+		host := c.Request.Host
+
+		c.JSON(http.StatusOK, gin.H{
+			"status": "ok",
+			"host":   host,
+		})
 	})
 }
 

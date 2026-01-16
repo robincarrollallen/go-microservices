@@ -1,0 +1,9 @@
+app:
+  name: user-service
+  env: dev
+
+http:
+  port: 8081
+
+log:
+  level: debug

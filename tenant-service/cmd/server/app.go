@@ -2,19 +2,20 @@ package main
 
 import (
 	"fmt"
-	
-	"tenant-service/internal/config"
+
 	"tenant-service/internal/handler"
-	"tenant-service/internal/logger"
-	"tenant-service/internal/middleware"
 	"tenant-service/internal/repo"
 	"tenant-service/internal/service"
+
+	"shared.local/pkg/config"
+	"shared.local/pkg/logger"
+	"shared.local/pkg/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func run() error {
-	cfg, err := config.Load()
+	cfg, err := config.LoadBase()
 	if err != nil {
 		return fmt.Errorf("load config failed: %w", err)
 	}
@@ -26,7 +27,7 @@ func run() error {
 	r.Use(
 		middleware.TraceID(),
 		middleware.Logger(),
-		gin.Recovery(),
+		middleware.Recovery(),
 	)
 
 	// 依赖初始化

@@ -3,11 +3,11 @@ package service
 import (
 	"context"
 
+	"shared.local/pkg/logger"
+	"shared.local/pkg/trace"
 	"go.uber.org/zap"
 
-	"tenant-service/internal/logger"
 	"tenant-service/internal/repo"
-	"tenant-service/internal/trace"
 )
 
 type TenantService struct {

@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # 租户服务
+  tenant-service:
+    build:
+      context: ./tenant-service
+      dockerfile: Dockerfile
+    container_name: tenant-service
+    ports:
+      - "8001:8080"
+    environment:
+      - USER_SERVICE_URL=http://user-service:8080
+      - LOG_LEVEL=debug
+      - SERVICE_NAME=tenant-service
+    networks:
+      - microservices
+    depends_on:
+      - user-service
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # 用户服务
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    container_name: user-service
+    ports:
+      - "8002:8080"
+    environment:
+      - LOG_LEVEL=debug
+      - SERVICE_NAME=user-service
+    networks:
+      - microservices
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  microservices:
+    driver: bridge
+

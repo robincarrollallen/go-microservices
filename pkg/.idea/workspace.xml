@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e6aa7ced-585f-4e51-9566-afbed16d53e6" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../user-service/cmd/server/app.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../user-service/cmd/server/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tenant-service/cmd/server/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/../tenant-service/cmd/server/app.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tenant-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/../tenant-service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tenant-service/internal/config/config.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tenant-service/internal/handler/tenant_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/../tenant-service/internal/handler/tenant_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tenant-service/internal/logger/logger.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tenant-service/internal/middleware/logger.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tenant-service/internal/middleware/trace.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tenant-service/internal/service/tenant_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/../tenant-service/internal/service/tenant_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tenant-service/internal/trace/trace.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../user-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/../user-service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../user-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/../user-service/go.sum" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="GOROOT" url="file:///usr/local/go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 7
+}]]></component>
+  <component name="ProjectId" id="38KgALO3xRW06wyOb4MD3dXQAqB" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.GoLinterPluginOnboardingV2": "true",
+    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "go.sdk.automatically.set": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/Users/ailtian/Documents/Demo/go-microservices/pkg",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-gosdk-72a9cf600ed8-dfa3e7267ae0-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-253.29346.255" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-GO-253.29346.255" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e6aa7ced-585f-4e51-9566-afbed16d53e6" name="Changes" comment="" />
+      <created>1768553531521</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1768553531521</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
