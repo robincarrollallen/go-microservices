@@ -3,10 +3,13 @@ package main
 import (
 	"fmt"
 
+	"user-service/internal/handler"
+	"user-service/internal/repo"
+	"user-service/internal/service"
+
 	"shared.local/pkg/config"
 	"shared.local/pkg/logger"
 	"shared.local/pkg/middleware"
-	"shared.local/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,12 +30,11 @@ func run() error {
 		middleware.Recovery(),
 	)
 
-	// 健康检查
-	r.GET("/health", func(c *gin.Context) {
-		response.Success(c, gin.H{"status": "ok"})
-	})
-
-	// TODO: 添加用户相关的 handler
+	// 依赖初始化
+	userRepo := repo.NewUserRepo()
+	userService := service.NewUserService(userRepo)
+	userHandler := handler.NewUserHandler(userService)
+	userHandler.Register(r)
 
 	addr := fmt.Sprintf(":%d", cfg.HTTP.Port)
 	return r.Run(addr)

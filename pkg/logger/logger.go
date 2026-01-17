@@ -12,6 +12,9 @@ func Init(level string) {
 
 	cfg.EncoderConfig.TimeKey = "time"
 	cfg.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	cfg.OutputPaths = []string{"stdout"}
+	cfg.ErrorOutputPaths = []string{"stderr"}
+
 
 	if level == "debug" {
 		cfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)

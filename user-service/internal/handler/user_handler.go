@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"net"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -8,25 +9,25 @@ import (
 	"shared.local/pkg/logger"
 	"shared.local/pkg/trace"
 
-	"tenant-service/internal/service"
+	"user-service/internal/service"
 )
 
-type TenantHandler struct {
-	service *service.TenantService
+type UserHandler struct {
+	service *service.UserService
 }
 
-func NewTenantHandler(s *service.TenantService) *TenantHandler {
-	return &TenantHandler{service: s}
+func NewUserHandler(s *service.UserService) *UserHandler {
+	return &UserHandler{service: s}
 }
 
 // Register 主注册方法，协调所有路由注册
-func (h *TenantHandler) Register(r *gin.Engine) {
+func (h *UserHandler) Register(r *gin.Engine) {
 	h.registerHealthRoutes(r)
-	h.registerTenantRoutes(r)
+	h.registerUserRoutes(r)
 }
 
 // 健康检查相关路由
-func (h *TenantHandler) registerHealthRoutes(r *gin.Engine) {
+func (h *UserHandler) registerHealthRoutes(r *gin.Engine) {
 	r.GET("/health", func(c *gin.Context) {
 		host := c.Request.Host
 		if h, _, err := net.SplitHostPort(host); err == nil {
@@ -35,31 +36,31 @@ func (h *TenantHandler) registerHealthRoutes(r *gin.Engine) {
 
 		c.JSON(http.StatusOK, gin.H{
 			"status": "ok",
-			"host": host,
+			"host":   host,
 		})
 	})
 }
 
-// 商户相关路由
-func (h *TenantHandler) registerTenantRoutes(r *gin.Engine) {
-	r.GET("/tenant/:id", h.getTenant)
+// 用户相关路由
+func (h *UserHandler) registerUserRoutes(r *gin.Engine) {
+	r.GET("/user/:id", h.getUser)
 }
 
-// 商户查询
-func (h *TenantHandler) getTenant(c *gin.Context) {
+// 用户查询
+func (h *UserHandler) getUser(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	logger.L().Info("get tenant in handler",
+	logger.L().Info("get user in handler",
 		zap.String("trace_id", trace.FromContext(ctx)),
 		zap.String("user_id", c.Param("id")),
 	)
 
 	id := c.Param("id")
 
-	tenant := h.service.GetTenant(ctx, id)
+	user := h.service.GetUser(ctx, id)
 
 	c.JSON(http.StatusOK, gin.H{
 		"id":   id,
-		"name": tenant,
+		"name": user,
 	})
 }
