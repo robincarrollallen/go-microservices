@@ -1,50 +1,100 @@
-version: '3.8'
-
 services:
-  # 租户服务
+  # 商户服务
   tenant-service:
     build:
-      context: ./tenant-service
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: ./tenant-service/Dockerfile
     container_name: tenant-service
     ports:
       - "8001:8080"
-    environment:
-      - USER_SERVICE_URL=http://user-service:8080
-      - LOG_LEVEL=debug
-      - SERVICE_NAME=tenant-service
+    env_file:
+      - .env.tenant-service
     networks:
       - microservices
     depends_on:
-      - user-service
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
+      interval: 20s # 检查间隔<默认30s>
+      timeout: 15s # 超时时间<默认30s>
+      retries: 5 # 重试次数<默认3>
+      start_period: 20s # 启动等待时间
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5' # 限制CPU使用率
+          memory: 512M # 限制内存使用率
+        reservations:
+          cpus: '0.25' # 启动下一个容器所需要的CPU使用率
+          memory: 256M # 启动下一个容器所需要的内存使用率
 
   # 用户服务
   user-service:
     build:
-      context: ./user-service
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: ./user-service/Dockerfile
     container_name: user-service
     ports:
       - "8002:8080"
-    environment:
-      - LOG_LEVEL=debug
-      - SERVICE_NAME=user-service
+    env_file:
+      - .env.user-service
     networks:
       - microservices
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
+      interval: 20s # 检查间隔<默认30s>
+      timeout: 15s # 超时时间<默认30s>
+      retries: 5 # 重试次数<默认3>
+      start_period: 20s # 启动等待时间
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5' # 限制CPU使用率
+          memory: 512M # 限制内存使用率
+        reservations:
+          cpus: '0.25' # 启动下一个容器所需要的CPU使用率
+          memory: 256M # 启动下一个容器所需要的内存使用率
 
+  # 数据库服务
+  postgres:
+    image: postgres:16.11-alpine  # 使用 Alpine 轻量级镜像
+    container_name: db-postgres
+    ports:
+      - "5432:5432"                # 访问端口
+    env_file:
+      - .env.postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data    # 数据持久化
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql  # 添加初始化脚本
+    networks:
+      - microservices               # 加入共享网络
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"] # 定义具体的健康检查命令
+      interval: 20s # 检查间隔<默认30s>
+      timeout: 15s # 超时时间<默认30s>
+      retries: 5 # 重试次数<默认3>
+      start_period: 20s # 启动等待时间
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          cpus: '1' # 限制CPU使用率
+          memory: 512M # 限制内存使用率
+        reservations:
+          cpus: '.5' # 启动下一个容器所需要的CPU使用率
+          memory: 256M # 启动下一个容器所需要的内存使用率
+
+# 网络
 networks:
   microservices:
     driver: bridge
 
+# 数据卷
+volumes:
+  postgres_data:

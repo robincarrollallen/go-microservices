@@ -1,0 +1,22 @@
+# 生产环境 - 所有敏感值都从环境变量读取
+
+app:
+  name: tenant-service
+  env: prod
+
+http:
+  port: ${APP_HTTP_PORT}
+
+log:
+  level: ${APP_LOG_LEVEL}
+
+db:
+  host: ${DB_HOST}
+  port: ${DB_PORT}
+  user: ${DB_USER}
+  password: ${DB_PASSWORD}
+  dbname: ${DB_NAME}
+  sslmode: ${DB_SSLMODE:require}
+  max_idle_conns: ${DB_MAX_IDLE_CONNS:10}
+  max_open_conns: ${DB_MAX_OPEN_CONNS:25}
+  max_lifetime: ${DB_MAX_LIFETIME:3600}

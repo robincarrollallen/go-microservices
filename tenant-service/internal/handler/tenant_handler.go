@@ -1,7 +1,11 @@
 package handler
 
 import (
+	"errors"
+	"fmt"
+	"net"
 	"net/http"
+	"tenant-service/internal/model"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -35,7 +39,7 @@ func (h *TenantHandler) registerHealthRoutes(r *gin.Engine) {
 
 		c.JSON(http.StatusOK, gin.H{
 			"status": "ok",
-			"host": host,
+			"host":   host,
 		})
 	})
 }
@@ -54,12 +58,37 @@ func (h *TenantHandler) getTenant(c *gin.Context) {
 		zap.String("user_id", c.Param("id")),
 	)
 
-	id := c.Param("id")
+	idStr := c.Param("id")
+	var tenant *model.Tenant
+	var err error
 
-	tenant := h.service.GetTenant(ctx, id)
+	if idStr != "" {
+		var id uint
+		if _, err := fmt.Sscanf(idStr, "%d", &id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Invalid tenant ID",
+			})
+			return
+		}
 
-	c.JSON(http.StatusOK, gin.H{
-		"id":   id,
-		"name": tenant,
-	})
+		tenant, err = h.service.GetTenantByID(ctx, id)
+	} else {
+		host := c.Request.Host
+		if h, _, err := net.SplitHostPort(host); err == nil {
+			host = h
+		}
+
+		tenant, err = h.service.GetTenantByDomain(ctx, host)
+	}
+
+	if err != nil {
+		if errors.Is(err, service.ErrTenantNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, tenant)
 }
