@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 	"tenant-service/internal/handler"
+	"tenant-service/internal/middleware"
 	"tenant-service/internal/repo"
 	"tenant-service/internal/service"
 
 	"shared.local/pkg/config"
 	"shared.local/pkg/database"
 	"shared.local/pkg/logger"
-	"shared.local/pkg/middleware"
+	pkgMiddleware "shared.local/pkg/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -47,9 +48,11 @@ func run() error {
 
 	r := gin.New()
 	r.Use(
-		middleware.TraceID(),
-		middleware.Logger(),
-		middleware.Recovery(),
+		pkgMiddleware.TraceID(),
+		pkgMiddleware.Logger(),
+		pkgMiddleware.ErrorHandler(),
+		middleware.ServiceErrorHandler(),
+		pkgMiddleware.Recovery(),
 	)
 	tenantHandler.Register(r) // 注册所有路由
 
