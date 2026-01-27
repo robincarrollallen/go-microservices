@@ -63,7 +63,7 @@ func (s *TenantService) CreateTenant(ctx context.Context, req dto.CreateTenantRe
 	return tenant, nil
 }
 
-func (s *TenantService) GetTenantByID(ctx context.Context, id uint) (*entity.Tenant, error) {
+func (s *TenantService) GetTenantByID(ctx context.Context, id uint) (*dto.TenantResponse, error) {
 	tenant, err := s.repo.GetTenantByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -74,7 +74,7 @@ func (s *TenantService) GetTenantByID(ctx context.Context, id uint) (*entity.Ten
 	return tenant, nil
 }
 
-func (s *TenantService) GetTenantByDomain(ctx context.Context, Domain string) (*entity.Tenant, error) {
+func (s *TenantService) GetTenantByDomain(ctx context.Context, Domain string) (*dto.TenantResponse, error) {
 	logger.L().Info("get tenant in service by domain",
 		zap.String("domain", Domain),
 		zap.String("trace_id", trace.FromContext(ctx)),

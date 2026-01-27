@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"errors"
+	"tenant-service/internal/model/dto"
 
 	"tenant-service/internal/model/entity"
 
@@ -29,31 +30,98 @@ func (r *TenantRepo) CreateTenant(ctx context.Context, tenant *entity.Tenant) er
 	return r.db.WithContext(ctx).Create(tenant).Error
 }
 
-func (r *TenantRepo) GetTenantByID(ctx context.Context, id uint) (*entity.Tenant, error) {
+func (r *TenantRepo) GetTenantByID(ctx context.Context, id uint) (*dto.TenantResponse, error) {
 	var tenant entity.Tenant
 	err := r.db.WithContext(ctx).First(&tenant, id).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
 	}
-	return &tenant, err
+	if err != nil {
+		return nil, err
+	}
+
+	var domains []string
+	err = r.db.WithContext(ctx).Where("tenant_id = ? AND status = 1", tenant.ID).Pluck("domain", &domains).Error
+	if err != nil {
+		return nil, err
+	}
+
+	response := &dto.TenantResponse{
+		ID:        tenant.ID,
+		Name:      tenant.Name,
+		Status:    tenant.Status,
+		Domains:   domains,
+		CreatedAt: tenant.CreatedAt,
+		UpdatedAt: tenant.UpdatedAt,
+	}
+
+	return response, nil
 }
 
-func (r *TenantRepo) GetTenantByName(ctx context.Context, name string) (*entity.Tenant, error) {
+func (r *TenantRepo) GetTenantByName(ctx context.Context, name string) (*dto.TenantResponse, error) {
 	var tenant entity.Tenant
 	err := r.db.WithContext(ctx).Where("name = ?", name).First(&tenant).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
 	}
-	return &tenant, err
+	if err != nil {
+		return nil, err
+	}
+
+	var domains []string
+	err = r.db.WithContext(ctx).Where("tenant_id = ? AND status = 1", tenant.ID).Pluck("domain", &domains).Error
+	if err != nil {
+		return nil, err
+	}
+
+	response := &dto.TenantResponse{
+		ID:        tenant.ID,
+		Name:      tenant.Name,
+		Status:    tenant.Status,
+		Domains:   domains,
+		CreatedAt: tenant.CreatedAt,
+		UpdatedAt: tenant.UpdatedAt,
+	}
+
+	return response, nil
 }
 
-func (r *TenantRepo) GetTenantByDomain(ctx context.Context, domain string) (*entity.Tenant, error) {
-	var tenant entity.Tenant
-	err := r.db.WithContext(ctx).Where("domain = ?", domain).First(&tenant).Error
+func (r *TenantRepo) GetTenantByDomain(ctx context.Context, domain string) (*dto.TenantResponse, error) {
+	var domainRecord entity.Domain
+	err := r.db.WithContext(ctx).Where("domain = ? AND status = 1", domain).
+		First(&domainRecord).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
 	}
-	return &tenant, err
+	if err != nil {
+		return nil, err
+	}
+
+	var tenant entity.Tenant
+	err = r.db.WithContext(ctx).First(&tenant, domainRecord.TenantID).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	var domains []string
+	err = r.db.WithContext(ctx).Where("tenant_id = ? AND status = 1", tenant.ID).Pluck("domain", &domains).Error
+	if err != nil {
+		return nil, err
+	}
+
+	response := &dto.TenantResponse{
+		ID:        tenant.ID,
+		Name:      tenant.Name,
+		Status:    tenant.Status,
+		Domains:   domains,
+		CreatedAt: tenant.CreatedAt,
+		UpdatedAt: tenant.UpdatedAt,
+	}
+
+	return response, nil
 }
 
 func (r *TenantRepo) Update(ctx context.Context, tenant *entity.Tenant) error {

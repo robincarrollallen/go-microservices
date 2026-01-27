@@ -7,12 +7,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+
 	"shared.local/pkg/logger"
 	"shared.local/pkg/response"
 	"shared.local/pkg/trace"
 
 	"tenant-service/internal/model/dto"
-	"tenant-service/internal/model/entity"
 	"tenant-service/internal/service"
 )
 
@@ -95,7 +95,7 @@ func (h *TenantHandler) getTenant(c *gin.Context) {
 	)
 
 	idStr := c.Param("id")
-	var tenant *entity.Tenant
+	var tenant *dto.TenantResponse
 	var err error
 
 	if idStr != "" {

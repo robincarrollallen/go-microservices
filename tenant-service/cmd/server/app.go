@@ -2,10 +2,8 @@ package main
 
 import (
 	"fmt"
-	"tenant-service/internal/handler"
+	"tenant-service/internal/bootstrap"
 	"tenant-service/internal/middleware"
-	"tenant-service/internal/repo"
-	"tenant-service/internal/service"
 
 	"shared.local/pkg/config"
 	"shared.local/pkg/database"
@@ -41,11 +39,6 @@ func run() error {
 		return fmt.Errorf("init database failed: %w", err)
 	}
 
-	// 依赖初始化
-	tenantRepo := repo.NewTenantRepo(db)
-	tenantService := service.NewTenantService(tenantRepo)
-	tenantHandler := handler.NewTenantHandler(tenantService)
-
 	r := gin.New()
 	r.Use(
 		pkgMiddleware.TraceID(),
@@ -54,7 +47,10 @@ func run() error {
 		middleware.ServiceErrorHandler(),
 		pkgMiddleware.Recovery(),
 	)
-	tenantHandler.Register(r) // 注册所有路由
+
+	// 初始化依赖并注册路由
+	container := bootstrap.SetupDependencies(db)
+	bootstrap.RegisterRoutes(container, r)
 
 	addr := fmt.Sprintf(":%d", cfg.HTTP.Port)
 	return r.Run(addr)
