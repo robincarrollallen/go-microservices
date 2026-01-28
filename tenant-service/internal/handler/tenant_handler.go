@@ -58,7 +58,7 @@ func (h *TenantHandler) createTenant(c *gin.Context) {
 	var req dto.CreateTenantRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 
-		logger.L().Warn("raw request body",
+		logger.L().Warn("create tenant request bind error",
 			zap.String("trace_id", trace.FromContext(ctx)),
 			zap.Any("body", err),
 		)

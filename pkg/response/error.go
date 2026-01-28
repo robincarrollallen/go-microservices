@@ -3,44 +3,56 @@ package response
 import (
 	"errors"
 	"fmt"
-	"net/http"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
 )
 
+// APIError 接口 - 业务错误需要实现此接口
+type APIError interface {
+	error // 实现 error 接口 (必须：可以作为 error 类型使用)
+	GetCode() int    // 返回错误码
+	GetMessage() string // 返回错误消息
+	GetStatus() int    // 返回 HTTP 状态码
+}
+
 // AppError 应用错误类型
 type AppError struct {
-	Code       int    // 业务错误码
-	Message    string // 错误信息
-	HTTPStatus int    // HTTP 状态码
+	Code    int    // 业务错误码
+	Message string // 错误信息
+	Status  int    // HTTP 状态码
 }
 
 // NewAppError 创建应用错误
-func NewAppError(code int, message string, httpStatus int) *AppError {
+func NewAppError(code int, message string, status int) *AppError {
 	return &AppError{
-		Code:       code,
-		Message:    message,
-		HTTPStatus: httpStatus,
+		Code:    code,
+		Message: message,
+		Status:  status,
 	}
 }
 
-// Error 实现 error 接口
+// Error 实现 error 接口 (必须：实现 error 类型方法)
 func (e *AppError) Error() string {
 	return e.Message
 }
 
-// 预定义的常用错误
-var (
-	ErrDuplicateName      = NewAppError(4001, "Tenant name already exists", http.StatusConflict)
-	ErrTenantNotFound     = NewAppError(4004, "Tenant not found", http.StatusNotFound)
-	ErrInvalidRequest     = NewAppError(4000, "Invalid request", http.StatusBadRequest)
-	ErrInternalServer     = NewAppError(5000, "Internal server error", http.StatusInternalServerError)
-	ErrDomainConflict     = NewAppError(4002, "Domain already exists", http.StatusConflict)
-)
+// GetCode 返回错误码
+func (e *AppError) GetCode() int {
+	return e.Code
+}
 
-// FormatValidationError 格式化 validator 验证错误
-// 支持单个和多个验证错误的处理，返回用户友好的错误信息
+// GetMessage 返回错误消息
+func (e *AppError) GetMessage() string {
+	return e.Message
+}
+
+// GetStatus 返回 HTTP 状态码
+func (e *AppError) GetStatus() int {
+	return e.Status
+}
+
+// FormatValidationError 格式化 validator 验证错误 支持单个和多个验证错误的处理，返回用户友好的错误信息
 func FormatValidationError(err error) string {
 	var validationErrors validator.ValidationErrors
 	if errors.As(err, &validationErrors) {
@@ -65,4 +77,3 @@ func FormatValidationError(err error) string {
 
 	return errStr
 }
-

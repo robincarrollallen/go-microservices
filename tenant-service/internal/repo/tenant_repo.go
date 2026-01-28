@@ -22,7 +22,7 @@ func NewTenantRepo(db *gorm.DB) *TenantRepo {
 }
 
 func (r *TenantRepo) CreateTenant(ctx context.Context, tenant *entity.Tenant) error {
-	logger.L().Info("create tenant DB",
+	logger.L().Info("create tenant from repo",
 		zap.String("trace_id", trace.FromContext(ctx)),
 		zap.Any("tenant", tenant),
 	)
@@ -31,6 +31,11 @@ func (r *TenantRepo) CreateTenant(ctx context.Context, tenant *entity.Tenant) er
 }
 
 func (r *TenantRepo) GetTenantByID(ctx context.Context, id uint) (*dto.TenantResponse, error) {
+	logger.L().Info("get tenant by id from repo",
+		zap.String("trace_id", trace.FromContext(ctx)),
+		zap.Uint("id", id),
+	)
+
 	var tenant entity.Tenant
 	err := r.db.WithContext(ctx).First(&tenant, id).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -41,7 +46,7 @@ func (r *TenantRepo) GetTenantByID(ctx context.Context, id uint) (*dto.TenantRes
 	}
 
 	var domains []string
-	err = r.db.WithContext(ctx).Where("tenant_id = ? AND status = 1", tenant.ID).Pluck("domain", &domains).Error
+	err = r.db.WithContext(ctx).Model(&entity.Domain{}).Where("tenant_id = ? AND status = 1", tenant.ID).Pluck("domain", &domains).Error
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +74,7 @@ func (r *TenantRepo) GetTenantByName(ctx context.Context, name string) (*dto.Ten
 	}
 
 	var domains []string
-	err = r.db.WithContext(ctx).Where("tenant_id = ? AND status = 1", tenant.ID).Pluck("domain", &domains).Error
+	err = r.db.WithContext(ctx).Model(&entity.Domain{}).Where("tenant_id = ? AND status = 1", tenant.ID).Pluck("domain", &domains).Error
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +112,7 @@ func (r *TenantRepo) GetTenantByDomain(ctx context.Context, domain string) (*dto
 	}
 
 	var domains []string
-	err = r.db.WithContext(ctx).Where("tenant_id = ? AND status = 1", tenant.ID).Pluck("domain", &domains).Error
+	err = r.db.WithContext(ctx).Model(&entity.Domain{}).Where("tenant_id = ? AND status = 1", tenant.ID).Pluck("domain", &domains).Error
 	if err != nil {
 		return nil, err
 	}

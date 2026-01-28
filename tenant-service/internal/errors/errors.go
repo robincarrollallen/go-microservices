@@ -1,9 +1,14 @@
 package apperror
 
-import "errors"
+import (
+	"net/http"
 
+	"shared.local/pkg/response"
+)
+
+// 预定义的常用错误
 var (
-	ErrTenantNotFound = errors.New("tenant not found")
-	ErrDomainExists   = errors.New("domain already exists")
-	ErrNameExists     = errors.New("tenant name already exists")
+	ErrNameExists     = response.NewAppError(4001, "Tenant name already exists", http.StatusConflict)
+	ErrTenantNotFound = response.NewAppError(4004, "Tenant not found", http.StatusNotFound)
+	ErrDomainExists   = response.NewAppError(4002, "Domain already exists", http.StatusConflict)
 )

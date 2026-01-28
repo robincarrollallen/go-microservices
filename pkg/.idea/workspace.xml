@@ -5,23 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e6aa7ced-585f-4e51-9566-afbed16d53e6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/config/loader.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/database/config.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/database/postgres.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../tenant-service/configs/config.prod.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../tenant-service/internal/model/tenant.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../env.example" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tenant-service/internal/model/dto/create_domain_request.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tenant-service/cmd/server/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/../tenant-service/cmd/server/app.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tenant-service/configs/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../tenant-service/configs/config.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/response/error.go" beforeDir="false" afterPath="$PROJECT_DIR$/response/error.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tenant-service/internal/bootstrap/setup.go" beforeDir="false" afterPath="$PROJECT_DIR$/../tenant-service/internal/bootstrap/setup.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tenant-service/internal/errors/errors.go" beforeDir="false" afterPath="$PROJECT_DIR$/../tenant-service/internal/errors/errors.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tenant-service/internal/handler/domain_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/../tenant-service/internal/handler/domain_handler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../tenant-service/internal/handler/tenant_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/../tenant-service/internal/handler/tenant_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tenant-service/internal/middleware/service_error_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/../tenant-service/internal/middleware/service_error_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tenant-service/internal/repo/domain_repo.go" beforeDir="false" afterPath="$PROJECT_DIR$/../tenant-service/internal/repo/domain_repo.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../tenant-service/internal/repo/tenant_repo.go" beforeDir="false" afterPath="$PROJECT_DIR$/../tenant-service/internal/repo/tenant_repo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tenant-service/internal/service/tenant_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/../tenant-service/internal/service/tenant_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tenant-service/internal/service/domain_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/../tenant-service/internal/service/domain_service.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +33,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "ailtian2025"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/robincarrollallen/go-microservices.git",
+    "accountId": "52abb07c-d226-47b9-951a-f86f1350f75e"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
 }</component>

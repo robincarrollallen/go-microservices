@@ -28,6 +28,11 @@ func ErrorHandler() gin.HandlerFunc {
 func handleCommonError(c *gin.Context, err error) {
 	traceID := trace.FromContext(c.Request.Context())
 
+	logger.L().Warn("system error",
+		zap.String("trace_id", traceID),
+		zap.Error(err),
+	)
+
 	// 检查是否是自定义 AppError
 	var appErr *response.AppError
 	if errors.As(err, &appErr) {
@@ -36,17 +41,12 @@ func handleCommonError(c *gin.Context, err error) {
 			zap.Int("error_code", appErr.Code),
 			zap.String("message", appErr.Message),
 		)
-		response.ErrorWithStatus(c, appErr.HTTPStatus, appErr.Code, appErr.Message)
+		response.ErrorWithStatus(c, appErr.Status, appErr.Code, appErr.Message)
 		c.Errors = nil // 错误已处理，清除错误堆栈
 		return
 	}
 
-	// 未知错误
-	logger.L().Error("unknown error",
-		zap.String("trace_id", traceID),
-		zap.Error(err),
-	)
-	response.ErrorWithStatus(c, http.StatusInternalServerError, 5000, "Internal server error")
+	response.ErrorWithStatus(c, http.StatusInternalServerError, 5000, err.Error())
 	c.Errors = nil // 错误已处理，清除错误堆栈
 }
 

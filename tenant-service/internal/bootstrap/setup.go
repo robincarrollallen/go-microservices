@@ -11,23 +11,24 @@ import (
 
 // SetupDependencies 初始化所有依赖并返回容器
 func SetupDependencies(db *gorm.DB) *Container {
+	tenantRepo := repo.NewTenantRepo(db)
+	domainRepo := repo.NewDomainRepo(db)
+
 	return &Container{
-		TenantHandler: initTenantModule(db),
-		DomainHandler: initDomainModule(db),
+		TenantHandler: initTenantModule(tenantRepo),
+		DomainHandler: initDomainModule(domainRepo, tenantRepo),
 	}
 }
 
 // initTenantModule 初始化租户模块
-func initTenantModule(db *gorm.DB) *handler.TenantHandler {
-	tenantRepo := repo.NewTenantRepo(db)
+func initTenantModule(tenantRepo *repo.TenantRepo) *handler.TenantHandler {
 	tenantService := service.NewTenantService(tenantRepo)
 	return handler.NewTenantHandler(tenantService)
 }
 
 // initDomainModule 初始化域名模块
-func initDomainModule(db *gorm.DB) *handler.DomainHandler {
-	domainRepo := repo.NewDomainRepo(db)
-	domainService := service.NewDomainService(domainRepo)
+func initDomainModule(domainRepo *repo.DomainRepo, tenantRepo *repo.TenantRepo) *handler.DomainHandler {
+	domainService := service.NewDomainService(domainRepo, tenantRepo)
 	return handler.NewDomainHandler(domainService)
 }
 
