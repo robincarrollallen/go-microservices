@@ -2,10 +2,11 @@ package service
 
 import (
 	"context"
-	"tenant-service/internal/errors"
+	apperror "tenant-service/internal/errors"
 	"tenant-service/internal/model/dto"
 	"tenant-service/internal/model/entity"
 	"tenant-service/internal/repo"
+	"tenant-service/internal/utils"
 
 	"go.uber.org/zap"
 	"shared.local/pkg/logger"
@@ -51,4 +52,47 @@ func (s *DomainService) CreateDomain(ctx context.Context, req dto.CreateDomainRe
 	}
 
 	return domain, nil
+}
+
+// ListDomains 分页查询域名列表
+func (s *DomainService) ListDomains(ctx context.Context, req dto.ListDomainsRequest) (*dto.ListDomainsResponse, error) {
+	logger.L().Info("list domains service",
+		zap.String("trace_id", trace.FromContext(ctx)),
+		zap.Int("page", req.Page),
+		zap.Int("pageSize", req.PageSize),
+		zap.Any("tenantID", req.TenantID),
+		zap.String("domain", req.Domain),
+	)
+
+	// 计算分页参数
+	offset, limit := utils.CalculatePaginationParams(req.Page, req.PageSize)
+
+	// 查询数据库
+	domains, total, err := s.domainRepo.List(ctx, offset, limit, req.TenantID, req.Domain)
+	if err != nil {
+		return nil, err
+	}
+
+	// 转换为响应 DTO
+	domainResponses := make([]dto.DomainResponse, 0, len(domains))
+	for _, d := range domains {
+		domainResponses = append(domainResponses, dto.DomainResponse{
+			ID:        d.ID,
+			Domain:    d.Domain,
+			Status:    d.Status,
+			CreatedAt: d.CreatedAt,
+			UpdatedAt: d.UpdatedAt,
+		})
+	}
+
+	// 计算总页数
+	totalPages := utils.CalculateTotalPages(total, req.PageSize)
+
+	return &dto.ListDomainsResponse{
+		Items:      domainResponses,
+		Total:      total,
+		Page:       req.Page,
+		PageSize:   req.PageSize,
+		TotalPages: totalPages,
+	}, nil
 }

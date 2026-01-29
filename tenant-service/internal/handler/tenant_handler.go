@@ -91,10 +91,10 @@ func (h *TenantHandler) getTenant(c *gin.Context) {
 
 	logger.L().Info("get tenant in handler",
 		zap.String("trace_id", trace.FromContext(ctx)),
-		zap.String("user_id", c.Param("id")),
+		zap.String("id", c.Query("id")),
 	)
 
-	idStr := c.Param("id")
+	idStr := c.Query("id")
 	var tenant *dto.TenantResponse
 	var err error
 

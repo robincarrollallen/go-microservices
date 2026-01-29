@@ -45,17 +45,10 @@ func (r *TenantRepo) GetTenantByID(ctx context.Context, id uint) (*dto.TenantRes
 		return nil, err
 	}
 
-	var domains []string
-	err = r.db.WithContext(ctx).Model(&entity.Domain{}).Where("tenant_id = ? AND status = 1", tenant.ID).Pluck("domain", &domains).Error
-	if err != nil {
-		return nil, err
-	}
-
 	response := &dto.TenantResponse{
 		ID:        tenant.ID,
 		Name:      tenant.Name,
 		Status:    tenant.Status,
-		Domains:   domains,
 		CreatedAt: tenant.CreatedAt,
 		UpdatedAt: tenant.UpdatedAt,
 	}
@@ -73,17 +66,10 @@ func (r *TenantRepo) GetTenantByName(ctx context.Context, name string) (*dto.Ten
 		return nil, err
 	}
 
-	var domains []string
-	err = r.db.WithContext(ctx).Model(&entity.Domain{}).Where("tenant_id = ? AND status = 1", tenant.ID).Pluck("domain", &domains).Error
-	if err != nil {
-		return nil, err
-	}
-
 	response := &dto.TenantResponse{
 		ID:        tenant.ID,
 		Name:      tenant.Name,
 		Status:    tenant.Status,
-		Domains:   domains,
 		CreatedAt: tenant.CreatedAt,
 		UpdatedAt: tenant.UpdatedAt,
 	}
@@ -111,17 +97,10 @@ func (r *TenantRepo) GetTenantByDomain(ctx context.Context, domain string) (*dto
 		return nil, err
 	}
 
-	var domains []string
-	err = r.db.WithContext(ctx).Model(&entity.Domain{}).Where("tenant_id = ? AND status = 1", tenant.ID).Pluck("domain", &domains).Error
-	if err != nil {
-		return nil, err
-	}
-
 	response := &dto.TenantResponse{
 		ID:        tenant.ID,
 		Name:      tenant.Name,
 		Status:    tenant.Status,
-		Domains:   domains,
 		CreatedAt: tenant.CreatedAt,
 		UpdatedAt: tenant.UpdatedAt,
 	}
