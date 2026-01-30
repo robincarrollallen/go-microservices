@@ -6,10 +6,10 @@ import (
 	"tenant-service/internal/model/dto"
 	"tenant-service/internal/model/entity"
 	"tenant-service/internal/repo"
-	"tenant-service/internal/utils"
 
 	"go.uber.org/zap"
 	"shared.local/pkg/logger"
+	"shared.local/pkg/pagination"
 	"shared.local/pkg/trace"
 )
 
@@ -64,17 +64,14 @@ func (s *DomainService) ListDomains(ctx context.Context, req dto.ListDomainsRequ
 		zap.String("domain", req.Domain),
 	)
 
-	// 计算分页参数
-	offset, limit := utils.CalculatePaginationParams(req.Page, req.PageSize)
+	offset, limit := pagination.CalculatePaginationParams(req.Page, req.PageSize) // 计算分页参数
 
-	// 查询数据库
-	domains, total, err := s.domainRepo.List(ctx, offset, limit, req.TenantID, req.Domain)
+	domains, total, err := s.domainRepo.List(ctx, offset, limit, req.TenantID, req.Domain) // 查询数据库
 	if err != nil {
 		return nil, err
 	}
 
-	// 转换为响应 DTO
-	domainResponses := make([]dto.DomainResponse, 0, len(domains))
+	domainResponses := make([]dto.DomainResponse, 0, len(domains)) // 转换为响应 DTO
 	for _, d := range domains {
 		domainResponses = append(domainResponses, dto.DomainResponse{
 			ID:        d.ID,
@@ -85,8 +82,7 @@ func (s *DomainService) ListDomains(ctx context.Context, req dto.ListDomainsRequ
 		})
 	}
 
-	// 计算总页数
-	totalPages := utils.CalculateTotalPages(total, req.PageSize)
+	totalPages := pagination.CalculateTotalPages(total, req.PageSize) // 计算总页数
 
 	return &dto.ListDomainsResponse{
 		Items:      domainResponses,

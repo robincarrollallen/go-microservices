@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"shared.local/pkg/logger"
+	"shared.local/pkg/pagination"
 	"shared.local/pkg/response"
 	"shared.local/pkg/trace"
 )
@@ -79,7 +80,7 @@ func (h *DomainHandler) getDomains(c *gin.Context) {
 
 	// 解析可选的查询参数
 	var tenantID *uint
-	if tenantIDStr := c.Query("tenant_id"); tenantIDStr != "" {
+	if tenantIDStr := c.Query("tenantID"); tenantIDStr != "" {
 		var id uint
 		if _, err := parseScanuint(tenantIDStr, &id); err == nil {
 			tenantID = &id
@@ -90,7 +91,7 @@ func (h *DomainHandler) getDomains(c *gin.Context) {
 
 	// 构建请求
 	req := dto.ListDomainsRequest{
-		PaginationRequest: dto.PaginationRequest{
+		PaginationRequest: pagination.PaginationRequest{
 			Page:     page,
 			PageSize: pageSize,
 		},
