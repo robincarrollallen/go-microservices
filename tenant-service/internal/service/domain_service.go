@@ -64,7 +64,9 @@ func (s *DomainService) ListDomains(ctx context.Context, req dto.ListDomainsRequ
 		zap.String("domain", req.Domain),
 	)
 
-	offset, limit := pagination.CalculatePaginationParams(req.Page, req.PageSize) // 计算分页参数
+	// 将 PaginationRequest 转换为 PaginationParams
+	params := req.ToPaginationParams()
+	offset, limit := pagination.CalculatePaginationParams(params) // 计算分页参数
 
 	domains, total, err := s.domainRepo.List(ctx, offset, limit, req.TenantID, req.Domain) // 查询数据库
 	if err != nil {
@@ -82,13 +84,13 @@ func (s *DomainService) ListDomains(ctx context.Context, req dto.ListDomainsRequ
 		})
 	}
 
-	totalPages := pagination.CalculateTotalPages(total, req.PageSize) // 计算总页数
+	totalPages := pagination.CalculateTotalPages(total, params.PageSize) // 计算总页数
 
 	return &dto.ListDomainsResponse{
 		Items:      domainResponses,
 		Total:      total,
-		Page:       req.Page,
-		PageSize:   req.PageSize,
+		Page:       params.Page,
+		PageSize:   params.PageSize,
 		TotalPages: totalPages,
 	}, nil
 }

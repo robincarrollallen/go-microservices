@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"tenant-service/internal/model/dto"
 	"tenant-service/internal/service"
@@ -9,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"shared.local/pkg/logger"
-	"shared.local/pkg/pagination"
 	"shared.local/pkg/response"
 	"shared.local/pkg/trace"
 )
@@ -68,35 +66,17 @@ func (h *DomainHandler) createDomain(c *gin.Context) {
 func (h *DomainHandler) getDomains(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	// 解析分页参数，设置默认值
-	page := 1
-	pageSize := 10
-	if p := c.DefaultQuery("page", "1"); p != "" {
-		_, _ = parseScanInt(p, &page)
-	}
-	if ps := c.DefaultQuery("pageSize", "10"); ps != "" {
-		_, _ = parseScanInt(ps, &pageSize)
-	}
+	// 解析分页参数和其他查询参数
+	var req dto.ListDomainsRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
+		logger.L().Warn("list domains request bind error",
+			zap.String("trace_id", trace.FromContext(ctx)),
+			zap.Any("error", err),
+		)
 
-	// 解析可选的查询参数
-	var tenantID *uint
-	if tenantIDStr := c.Query("tenantID"); tenantIDStr != "" {
-		var id uint
-		if _, err := parseScanuint(tenantIDStr, &id); err == nil {
-			tenantID = &id
-		}
-	}
-
-	domain := c.Query("domain")
-
-	// 构建请求
-	req := dto.ListDomainsRequest{
-		PaginationRequest: pagination.PaginationRequest{
-			Page:     page,
-			PageSize: pageSize,
-		},
-		TenantID: tenantID,
-		Domain:   domain,
+		formattedErr := response.FormatValidationError(err)
+		response.ErrorWithStatus(c, http.StatusBadRequest, 4000, formattedErr)
+		return
 	}
 
 	logger.L().Info("list domains request",
@@ -112,16 +92,4 @@ func (h *DomainHandler) getDomains(c *gin.Context) {
 	}
 
 	response.Success(c, result)
-}
-
-// 辅助函数：解析整数
-func parseScanInt(s string, v *int) (int, error) {
-	_, err := fmt.Sscanf(s, "%d", v)
-	return *v, err
-}
-
-// 辅助函数：解析无符号整数
-func parseScanuint(s string, v *uint) (uint, error) {
-	_, err := fmt.Sscanf(s, "%d", v)
-	return *v, err
 }

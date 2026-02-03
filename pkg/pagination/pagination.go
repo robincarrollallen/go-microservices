@@ -7,8 +7,47 @@ type PaginationParams struct {
 	PageSize int
 }
 
-// CalculatePaginationParams 计算分页参数
-func CalculatePaginationParams(page, pageSize int) (offset int, limit int) {
+// NewPaginationParams 创建默认分页参数
+func NewPaginationParams() PaginationParams {
+	return PaginationParams{
+		Page:     1,
+		PageSize: 10,
+	}
+}
+
+// NewPaginationParamsWithValues 从用户输入创建分页参数，缺失的字段使用默认值
+func NewPaginationParamsWithValues(page, pageSize int) PaginationParams {
+	params := NewPaginationParams()
+
+	if page > 0 {
+		params.Page = page
+	}
+	if pageSize > 0 {
+		params.PageSize = pageSize
+	}
+
+	return params
+}
+
+// NewPaginationParamsFromPointers 从指针创建分页参数，处理可能为 nil 的值
+func NewPaginationParamsFromPointers(page, pageSize *int) PaginationParams {
+	params := NewPaginationParams()
+
+	if page != nil && *page > 0 {
+		params.Page = *page
+	}
+	if pageSize != nil && *pageSize > 0 {
+		params.PageSize = *pageSize
+	}
+
+	return params
+}
+
+// CalculatePaginationParams 计算分页参数（从 PaginationParams 结构体）
+func CalculatePaginationParams(params PaginationParams) (offset int, limit int) {
+	page := params.Page
+	pageSize := params.PageSize
+
 	if pageSize <= 0 {
 		pageSize = 10
 	}

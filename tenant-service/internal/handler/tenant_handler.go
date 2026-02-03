@@ -47,7 +47,8 @@ func (h *TenantHandler) registerHealthRoutes(r *gin.Engine) {
 
 // 商户相关路由
 func (h *TenantHandler) registerTenantRoutes(r *gin.Engine) {
-	r.GET("/tenant/info", h.getTenant)
+	r.GET("/tenants", h.getTenants)
+	r.GET("/tenant/info", h.getTenantInfo)
 	r.POST("/tenant/create", h.createTenant)
 }
 
@@ -85,8 +86,42 @@ func (h *TenantHandler) createTenant(c *gin.Context) {
 	})
 }
 
-// 商户查询
-func (h *TenantHandler) getTenant(c *gin.Context) {
+// 商户列表查询
+func (h *TenantHandler) getTenants(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	var req dto.ListTenantRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
+		logger.L().Warn("list tenants request bind error",
+			zap.String("trace_id", trace.FromContext(ctx)),
+			zap.Any("error", err),
+		)
+
+		formattedErr := response.FormatValidationError(err)
+		response.ErrorWithStatus(c, http.StatusBadRequest, 4000, formattedErr)
+		return
+	}
+
+	logger.L().Info("get tenants in handler",
+		zap.String("trace_id", trace.FromContext(ctx)),
+		zap.Any("Query", c.Request.URL.Query()),
+	)
+
+	result, err := h.service.ListTenants(ctx, req)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":    0,
+		"message": "success",
+		"data":    result,
+	})
+}
+
+// 商户信息查询(根据ID或者域名)
+func (h *TenantHandler) getTenantInfo(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	logger.L().Info("get tenant in handler",

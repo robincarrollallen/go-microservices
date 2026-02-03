@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"tenant-service/internal/model/dto"
+	"time"
 
 	"tenant-service/internal/model/entity"
 
@@ -183,6 +184,61 @@ func (r *TenantRepo) List(ctx context.Context, offset, limit int) ([]entity.Tena
 		return nil, 0, err
 	}
 
+	err := db.Offset(offset).Limit(limit).Find(&tenants).Error
+	return tenants, total, err
+}
+
+func (r *TenantRepo) ListTenants(ctx context.Context, id *uint, domain string, startTime, endTime *time.Time, offset, limit int) ([]entity.Tenant, int64, error) {
+	logger.L().Info("list tenants from repo",
+		zap.String("trace_id", trace.FromContext(ctx)),
+		zap.Any("id", id),
+		zap.String("domain", domain),
+		zap.Any("offset", offset),
+		zap.Any("limit", limit),
+		zap.Any("startTime", startTime),
+		zap.Any("endTime", endTime),
+	)
+
+	var tenants []entity.Tenant
+	var total int64
+
+	db := r.db.WithContext(ctx).Model(&entity.Tenant{})
+
+	// 按ID查询
+	if id != nil {
+		db = db.Where("id = ?", *id)
+	}
+
+	// 按Domain查询 - 需要 LEFT JOIN domains表
+	if domain != "" {
+		db = db.Joins("LEFT JOIN domains ON domains.tenant_id = tenants.id").
+			Where("domains.domain = ? AND domains.status = 1", domain).
+			Distinct("tenants.id")
+	}
+
+	// 按时间范围查询
+	if startTime != nil {
+		db = db.Where("created_at >= ?", startTime)
+	}
+	if endTime != nil {
+		db = db.Where("created_at <= ?", endTime)
+	}
+
+	logger.L().Warn("list tenants from repo after count",
+		zap.String("trace_id", trace.FromContext(ctx)),
+		zap.String("domain", domain),
+		zap.Bool("has_id_filter", id != nil),
+
+		zap.Bool("has_time_range", startTime != nil || endTime != nil),
+		zap.Int64("count", total),
+	)
+
+	// 计算总数
+	if err := db.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// 分页查询
 	err := db.Offset(offset).Limit(limit).Find(&tenants).Error
 	return tenants, total, err
 }

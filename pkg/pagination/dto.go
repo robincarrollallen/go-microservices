@@ -1,8 +1,13 @@
 package pagination
 
 type PaginationRequest struct {
-	Page     int `form:"page" binding:"required,min=1"`
-	PageSize int `form:"pageSize" binding:"required,min=1,max=100"`
+	Page     int `form:"page" binding:"omitempty,min=1"`
+	PageSize int `form:"pageSize" binding:"omitempty,min=1,max=100"`
+}
+
+// ToPaginationParams 将 PaginationRequest 转换为 PaginationParams
+func (r *PaginationRequest) ToPaginationParams() PaginationParams {
+	return NewPaginationParamsWithValues(r.Page, r.PageSize)
 }
 
 type PaginationResponse[T any] struct {

@@ -1,6 +1,10 @@
 package dto
 
-import "time"
+import (
+	"time"
+
+	"shared.local/pkg/pagination"
+)
 
 type TenantResponse struct {
 	ID        uint      `json:"id"`
@@ -9,3 +13,5 @@ type TenantResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type ListTenantResponse = pagination.PaginationResponse[TenantResponse]

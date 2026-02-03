@@ -2,8 +2,11 @@ package repo
 
 import (
 	"context"
+	"errors"
+	apperror "tenant-service/internal/errors"
 	"tenant-service/internal/model/entity"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"shared.local/pkg/logger"
@@ -18,13 +21,24 @@ func NewDomainRepo(db *gorm.DB) *DomainRepo {
 	return &DomainRepo{db: db}
 }
 
+// CreateDomain 创建域名(repo层)
 func (r *DomainRepo) CreateDomain(ctx context.Context, domain *entity.Domain) error {
 	logger.L().Info("create domain DB",
 		zap.String("trace_id", trace.FromContext(ctx)),
 		zap.Any("domain", domain),
 	)
 
-	return r.db.WithContext(ctx).Create(domain).Error
+	err := r.db.WithContext(ctx).Create(domain).Error
+	if err != nil {
+		// 检查 pgconn.PgError（PostgreSQL 驱动的错误）
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.SQLState() == "23505" {
+			// 23505 = unique_violation
+			return apperror.ErrDomainExists
+		}
+		return err
+	}
+	return nil
 }
 
 // List 分页查询域名列表

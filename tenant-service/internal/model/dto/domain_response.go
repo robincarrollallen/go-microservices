@@ -9,3 +9,11 @@ type DomainResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type ListDomainsResponse struct {
+	Items      []DomainResponse `json:"items"`
+	Total      int64            `json:"total"`
+	Page       int              `json:"page"`
+	PageSize   int              `json:"pageSize"`
+	TotalPages int              `json:"totalPages"`
+}

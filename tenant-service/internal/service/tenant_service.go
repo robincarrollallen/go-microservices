@@ -7,6 +7,7 @@ import (
 	"go.uber.org/zap"
 
 	"shared.local/pkg/logger"
+	"shared.local/pkg/pagination"
 	"shared.local/pkg/trace"
 
 	"tenant-service/internal/model/dto"
@@ -91,4 +92,44 @@ func (s *TenantService) GetTenantByDomain(ctx context.Context, Domain string) (*
 	}
 
 	return tenant, nil
+}
+
+func (s *TenantService) ListTenants(ctx context.Context, req dto.ListTenantRequest) (*dto.ListTenantResponse, error) {
+	logger.L().Info("list tenants service",
+		zap.String("trace_id", trace.FromContext(ctx)),
+		zap.Any("request", req),
+	)
+
+	// 将 PaginationRequest 转换为 PaginationParams
+	params := req.ToPaginationParams()
+	offset, limit := pagination.CalculatePaginationParams(params)
+
+	// 调用repo查询
+	tenants, total, err := s.repo.ListTenants(ctx, req.ID, req.Domain, req.StartTime, req.EndTime, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	// 转换为响应DTO
+	items := make([]dto.TenantResponse, len(tenants))
+	for i, tenant := range tenants {
+		items[i] = dto.TenantResponse{
+			ID:        tenant.ID,
+			Name:      tenant.Name,
+			Status:    tenant.Status,
+			CreatedAt: tenant.CreatedAt,
+			UpdatedAt: tenant.UpdatedAt,
+		}
+	}
+
+	// 计算总页数
+	totalPages := pagination.CalculateTotalPages(total, params.PageSize)
+
+	return &dto.ListTenantResponse{
+		Items:      items,
+		Total:      total,
+		Page:       params.Page,
+		PageSize:   params.PageSize,
+		TotalPages: totalPages,
+	}, nil
 }
